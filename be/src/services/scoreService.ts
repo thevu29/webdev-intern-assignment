@@ -61,16 +61,14 @@ export const getStatisticsService = async () => {
     return {};
   }
 
-  const formattedStats = subjects.reduce((acc, subject) => {
-    acc[subject] = {
-      greaterThanOrEqual8:
-        parseInt(statistics[0].get(`${subject}_gte8`) as string) || 0,
-      from6To8: parseInt(statistics[0].get(`${subject}_6to8`) as string) || 0,
-      from4To6: parseInt(statistics[0].get(`${subject}_4to6`) as string) || 0,
-      lessThan4: parseInt(statistics[0].get(`${subject}_lt4`) as string) || 0,
-    };
-    return acc;
-  }, {} as any);
+  const formattedStats = subjects.map((subject) => ({
+    subject,
+    greaterThanOrEqual8:
+      parseInt(statistics[0].get(`${subject}_gte8`) as string) || 0,
+    from6To8: parseInt(statistics[0].get(`${subject}_6to8`) as string) || 0,
+    from4To6: parseInt(statistics[0].get(`${subject}_4to6`) as string) || 0,
+    lessThan4: parseInt(statistics[0].get(`${subject}_lt4`) as string) || 0,
+  }));
 
   return formattedStats;
 };
