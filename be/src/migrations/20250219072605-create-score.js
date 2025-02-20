@@ -12,6 +12,7 @@ module.exports = {
       sbd: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
       toan: {
         type: Sequelize.FLOAT,

@@ -49,6 +49,13 @@ module.exports = {
       throw new Error(`CSV file not found at: ${csvPath}`);
     }
 
+    const existingRecords = await queryInterface.sequelize.query(
+      'SELECT sbd FROM scores',
+      { type: Sequelize.QueryTypes.SELECT }
+    );
+
+    const existingSbds = new Set(existingRecords.map(record => record.sbd));
+
     return new Promise((resolve, reject) => {
       const records = [];
 
@@ -56,7 +63,9 @@ module.exports = {
         .pipe(csv())
         .pipe(transformData)
         .on("data", (row) => {
-          records.push(row);
+          if (!existingSbds.has(row.sbd)) {
+            records.push(row);
+          }
         }) 
         .on("end", async () => {
           try {

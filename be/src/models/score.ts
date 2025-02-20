@@ -40,6 +40,7 @@ Score.init(
     },
     sbd: {
       type: DataTypes.STRING,
+      unique: true,
       allowNull: false,
     },
     toan: {

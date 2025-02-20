@@ -1,4 +1,3 @@
-import { sequelize } from "./../config/database";
 import { Request, Response } from "express";
 import { literal, Op, Sequelize } from "sequelize";
 import Score from "../models/score";
