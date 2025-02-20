@@ -11,10 +11,10 @@ if (process.env.DATABASE_URL) {
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false
-      }
+        rejectUnauthorized: false,
+      },
     },
-    logging: false
+    logging: false,
   });
 } else {
   sequelize = new Sequelize({
@@ -24,10 +24,11 @@ if (process.env.DATABASE_URL) {
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
     dialect: "postgres",
-    logging: false
+    logging: false,
   });
 }
 
+export { sequelize };
 
 export const connectDB = async () => {
   try {

@@ -6,36 +6,14 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://webdev_6uyu_user:wnQQ3GGapKL2K6E3A8atgL44xa5LlWXZ@dpg-cuqnhqrv2p9s73fgrvk0-a/webdev_6uyu
-    volumes:
-      - ./:/app
-      - /app/node_modules
-      - /app/dist
-    depends_on:
-      db:
-        condition: service_healthy
+      - DATABASE_URL=postgresql://webdev_6uyu_user:wnQQ3GGapKL2K6E3A8atgL44xa5LlWXZ@dpg-cuqnhqrv2p9s73fgrvk0-a.singapore-postgres.render.com/webdev_6uyu
+      - PORT=8080
     command: sh -c "
-      npm run build &&
-      npx sequelize-cli db:migrate &&
-      npx sequelize-cli db:seed:all &&
+      if [[ $(df -h / | awk 'NR==2 {print $4}' | sed 's/G//') -lt 1 ]]; then
+        echo 'Not enough disk space. Skipping database migrations and seeding.';
+      else
+        echo 'Running database migrations and seeding...';
+        npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all || echo 'Database migration or seeding failed. Continuing...';
+      fi;
+      echo 'Starting application...';
       npm start"
-
-  db:
-    image: postgres
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=webdev
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  postgres_data:
