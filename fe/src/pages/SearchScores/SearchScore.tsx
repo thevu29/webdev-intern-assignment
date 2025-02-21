@@ -104,7 +104,7 @@ const SearchScore = () => {
                   <Table.Td>{score.sbd}</Table.Td>
                   <Table.Td>{score.toan}</Table.Td>
                   <Table.Td>{score.ngu_van}</Table.Td>
-                  <Table.Td>{score.vat_ly}</Table.Td>
+                  <Table.Td>{score.vat_li}</Table.Td>
                   <Table.Td>{score.hoa_hoc}</Table.Td>
                   <Table.Td>{score.sinh_hoc}</Table.Td>
                   <Table.Td>{score.lich_su}</Table.Td>

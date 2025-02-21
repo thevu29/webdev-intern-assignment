@@ -1,6 +1,5 @@
 import { Group, Text, ScrollArea } from "@mantine/core";
 import { IconGauge, IconSearch } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
 import LinksGroup from "./NavbarLinksGroup";
 import classes from "./Navbar.module.scss";
 import clsx from "clsx";
@@ -20,21 +19,19 @@ const Navbar = () => {
       className={clsx(
         classes.navbar,
         "transition-all duration-300",
-        "w-[300px]"
+        "w-[250px]"
       )}
     >
       <div className={classes.header}>
-        <Link to="">
-          <Group>
-            <Text
-              size="xl"
-              fw={900}
-              className={clsx(classes.logoText, classes.expanded)}
-            >
-              Menu
-            </Text>
-          </Group>
-        </Link>
+        <Group>
+          <Text
+            size="xl"
+            fw={900}
+            className={clsx(classes.logoText, classes.expanded)}
+          >
+            Menu
+          </Text>
+        </Group>
       </div>
 
       <ScrollArea className={classes.links}>
