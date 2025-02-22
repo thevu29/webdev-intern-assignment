@@ -1,11 +1,28 @@
 # Webdev-Intern-Assignment
 
+## Introduction
+
+This is an assignment for web development interns. The project is designed to assess fundamental web development skills, including frontend and backend development.
+
+## Technologies Used
+
+- **Frontend:** React, TailwindCSS, Mantine
+- **Backend:** NodeJS, Express
+- **Database:** PostgreSQL
+
 ## Deploy
 https://webdev-intern-assignment-eta.vercel.app/
 
-## Setup Instructions for Running Locally
+## Installation and Running the Project
 
-### Backend (NodeJS, ExpressJS)
+### Clone the Repository
+
+```sh
+git clone https://github.com/thevu29/webdev-intern-assignment.git
+cd webdev-intern-assignment
+```
+
+### Backend (NodeJS, Express)
 
 1. Navigate to the `be` directory:
     ```sh
