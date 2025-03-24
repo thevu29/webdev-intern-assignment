@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=postgresql://webdev_6uyu_user:wnQQ3GGapKL2K6E3A8atgL44xa5LlWXZ@dpg-cuqnhqrv2p9s73fgrvk0-a.singapore-postgres.render.com/webdev_6uyu
+      - DATABASE_URL=postgresql://webdev_intern_assignment_user:wJ30z0NNcnLgmnPBpmyGxWXysiNR7Jp7@dpg-cvgj6k2qgecs739foqdg-a.singapore-postgres.render.com/webdev_intern_assignment
       - PORT=8080
     command: sh -c "
       if [[ $(df -h / | awk 'NR==2 {print $4}' | sed 's/G//') -lt 1 ]]; then

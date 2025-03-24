@@ -9,50 +9,27 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      sbd: {
-        type: Sequelize.STRING,
+      studentId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true,
+        references: {
+          model: "students",
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
-      toan: {
+      subjectId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "subjects",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
+      score: {
         type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      ngu_van: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      ngoai_ngu: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      vat_li: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      hoa_hoc: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      sinh_hoc: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      lich_su: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      dia_li: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      gdcd: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      ma_ngoai_ngu: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -66,49 +43,15 @@ module.exports = {
       },
     });
 
-    await queryInterface.addIndex("scores", ["sbd"]);
-    await queryInterface.addIndex("scores", ["toan"]);
-    await queryInterface.addIndex("scores", ["ngu_van"]);
-    await queryInterface.addIndex("scores", ["ngoai_ngu"]);
-    await queryInterface.addIndex("scores", ["vat_li"]);
-    await queryInterface.addIndex("scores", ["hoa_hoc"]);
-    await queryInterface.addIndex("scores", ["sinh_hoc"]);
-    await queryInterface.addIndex("scores", ["lich_su"]);
-    await queryInterface.addIndex("scores", ["dia_li"]);
-    await queryInterface.addIndex("scores", ["gdcd"]);
-
-    await queryInterface.addIndex(
-      "scores",
-      [
-        "toan",
-        "ngu_van",
-        "ngoai_ngu",
-        "vat_li",
-        "hoa_hoc",
-        "sinh_hoc",
-        "lich_su",
-        "dia_li",
-        "gdcd",
-      ],
-      {
-        name: "idx_subjects",
-      }
-    );
+    await queryInterface.addIndex("scores", ["studentId"]);
+    await queryInterface.addIndex("scores", ["subjectId"]);
+    await queryInterface.addIndex("scores", ["studentId", "subjectId"], {
+      unique: true,
+      name: "idx_student_subject",
+    });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeIndex("scores", "scores_sbd");
-    await queryInterface.removeIndex("scores", "scores_toan");
-    await queryInterface.removeIndex("scores", "scores_ngu_van");
-    await queryInterface.removeIndex("scores", "scores_ngoai_ngu");
-    await queryInterface.removeIndex("scores", "scores_vat_li");
-    await queryInterface.removeIndex("scores", "scores_hoa_hoc");
-    await queryInterface.removeIndex("scores", "scores_sinh_hoc");
-    await queryInterface.removeIndex("scores", "scores_lich_su");
-    await queryInterface.removeIndex("scores", "scores_dia_li");
-    await queryInterface.removeIndex("scores", "scores_gdcd");
-    await queryInterface.removeIndex("scores", "idx_subjects");
-
     await queryInterface.dropTable("scores");
   },
 };

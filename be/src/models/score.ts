@@ -1,34 +1,20 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
+import Student from "./student";
+import Subject from "./subject";
 
 interface ScoreAttributes {
   id: number;
-  sbd: string;
-  toan: number | null;
-  ngu_van: number | null;
-  ngoai_ngu: number | null;
-  vat_li: number | null;
-  hoa_hoc: number | null;
-  sinh_hoc: number | null;
-  lich_su: number | null;
-  dia_li: number | null;
-  gdcd: number | null;
-  ma_ngoai_ngu: string | null;
+  studentId: number;
+  subjectId: number;
+  score: number;
 }
 
 class Score extends Model<ScoreAttributes> implements ScoreAttributes {
   public id!: number;
-  public sbd!: string;
-  public toan!: number | null;
-  public ngu_van!: number | null;
-  public ngoai_ngu!: number | null;
-  public vat_li!: number | null;
-  public hoa_hoc!: number | null;
-  public sinh_hoc!: number | null;
-  public lich_su!: number | null;
-  public dia_li!: number | null;
-  public gdcd!: number | null;
-  public ma_ngoai_ngu!: string | null;
+  public studentId!: number;
+  public subjectId!: number;
+  public score!: number;
 }
 
 Score.init(
@@ -38,50 +24,25 @@ Score.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    sbd: {
-      type: DataTypes.STRING,
-      unique: true,
+    studentId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "students",
+        key: "id",
+      },
     },
-    toan: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
+    subjectId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "subjects",
+        key: "id",
+      },
     },
-    ngu_van: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    ngoai_ngu: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    vat_li: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    hoa_hoc: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    sinh_hoc: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    lich_su: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    dia_li: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    gdcd: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    ma_ngoai_ngu: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    score: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {
@@ -90,51 +51,28 @@ Score.init(
     tableName: "scores",
     indexes: [
       {
-        fields: ["sbd"],
+        fields: ["studentId"],
       },
       {
-        fields: ["toan"],
+        fields: ["subjectId"],
       },
       {
-        fields: ["ngu_van"],
-      },
-      {
-        fields: ["ngoai_ngu"],
-      },
-      {
-        fields: ["vat_li"],
-      },
-      {
-        fields: ["hoa_hoc"],
-      },
-      {
-        fields: ["sinh_hoc"],
-      },
-      {
-        fields: ["lich_su"],
-      },
-      {
-        fields: ["dia_li"],
-      },
-      {
-        fields: ["gdcd"],
-      },
-      {
-        name: "idx_subjects",
-        fields: [
-          "toan",
-          "ngu_van",
-          "ngoai_ngu",
-          "vat_li",
-          "hoa_hoc",
-          "sinh_hoc",
-          "lich_su",
-          "dia_li",
-          "gdcd",
-        ],
+        name: "idx_student_subject",
+        fields: ["studentId", "subjectId"],
+        unique: true,
       },
     ],
   }
 );
+
+Score.belongsTo(Student, {
+  foreignKey: "studentId",
+  as: "student",
+});
+
+Score.belongsTo(Subject, {
+  foreignKey: "subjectId",
+  as: "subject",
+});
 
 export default Score;
