@@ -101,7 +101,7 @@ const SearchScore = () => {
             ) : (
               score && (
                 <Table.Tr>
-                  <Table.Td>{score.sbd}</Table.Td>
+                  <Table.Td>{score.registrationNumber}</Table.Td>
                   <Table.Td>{score.toan}</Table.Td>
                   <Table.Td>{score.ngu_van}</Table.Td>
                   <Table.Td>{score.vat_li}</Table.Td>
@@ -109,9 +109,7 @@ const SearchScore = () => {
                   <Table.Td>{score.sinh_hoc}</Table.Td>
                   <Table.Td>{score.lich_su}</Table.Td>
                   <Table.Td>{score.dia_li}</Table.Td>
-                  <Table.Td>
-                    {score.ngoai_ngu} ({score.ma_ngoai_ngu})
-                  </Table.Td>
+                  <Table.Td>{score.ngoai_ngu}</Table.Td>
                   <Table.Td>{score.gdcd}</Table.Td>
                 </Table.Tr>
               )

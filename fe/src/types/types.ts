@@ -1,5 +1,5 @@
 export interface Score {
-  sbd: string;
+  registrationNumber: string;
   toan: number;
   ngu_van: number;
   vat_li: number;
@@ -49,11 +49,11 @@ export interface BarChartData {
 }
 
 export interface GroupAScore {
-  sbd: string;
+  registrationNumber: string;
   toan: number;
   vat_li: number;
   hoa_hoc: number;
-  tong_diem: number;
+  totalScore: number;
 }
 
 export interface Top10StudentsGroupAResponse {

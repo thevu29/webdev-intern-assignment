@@ -81,13 +81,13 @@ const Dashboard = () => {
   });
 
   const rows = top10StudentsGroupA?.map((student, index) => (
-    <Table.Tr key={student.sbd}>
+    <Table.Tr key={student.registrationNumber}>
       <Table.Td>{index + 1}</Table.Td>
-      <Table.Td>{student.sbd}</Table.Td>
+      <Table.Td>{student.registrationNumber}</Table.Td>
       <Table.Td>{student.toan}</Table.Td>
       <Table.Td>{student.vat_li}</Table.Td>
       <Table.Td>{student.hoa_hoc}</Table.Td>
-      <Table.Td>{student.tong_diem}</Table.Td>
+      <Table.Td>{student.totalScore}</Table.Td>
     </Table.Tr>
   ));
 
