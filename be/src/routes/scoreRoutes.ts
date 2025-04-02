@@ -1,10 +1,16 @@
 import { Router } from "express";
-import { getScoreByRegistrationNumber, getStatistics, getTop10StudentsGroupA } from "../controllers/scoreController";
+import { scoreController } from "../controllers/scoreController";
 
 const router = Router();
 
-router.get("/", getScoreByRegistrationNumber);
-router.get("/statistics", getStatistics);
-router.get("/top-10-A", getTop10StudentsGroupA);
+router.get(
+  "/",
+  scoreController.getScoreByRegistrationNumber.bind(scoreController)
+);
+router.get("/statistics", scoreController.getStatistics.bind(scoreController));
+router.get(
+  "/top-students/:groupCode",
+  scoreController.getTopStudentsByGroup.bind(scoreController)
+);
 
 export default router;

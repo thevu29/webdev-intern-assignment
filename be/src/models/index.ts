@@ -1,5 +1,15 @@
 import Student from "./student";
-import Subject from "./subject";
+import Subject, {
+  MathSubject,
+  PhysicsSubject,
+  ChemistrySubject,
+  BiologySubject,
+  LiteratureSubject,
+  HistorySubject,
+  GeographySubject,
+  CivicEducationSubject,
+  ForeignLanguage,
+} from "./subject";
 import Score from "./score";
 import SubjectGroup from "./subjectGroup";
 
@@ -36,4 +46,18 @@ Subject.belongsTo(SubjectGroup, {
   as: "group",
 });
 
-export { Student, Subject, Score, SubjectGroup };
+export {
+  Student,
+  Subject,
+  Score,
+  SubjectGroup,
+  MathSubject,
+  PhysicsSubject,
+  ChemistrySubject,
+  BiologySubject,
+  LiteratureSubject,
+  HistorySubject,
+  GeographySubject,
+  CivicEducationSubject,
+  ForeignLanguage,
+};

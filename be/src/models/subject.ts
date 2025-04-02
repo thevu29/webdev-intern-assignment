@@ -2,11 +2,19 @@ import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
 import { ISubject } from "../interfaces";
 
-class Subject extends Model<ISubject> implements ISubject {
+export interface ISubjectCalculator {
+  calculateContribution(score: number): number;
+}
+
+class Subject extends Model<ISubject> implements ISubject, ISubjectCalculator {
   public id!: number;
   public name!: string;
   public code!: string;
   public groupId?: number;
+
+  calculateContribution(score: number): number {
+    return score;
+  }
 }
 
 Subject.init(
@@ -41,55 +49,55 @@ Subject.init(
   }
 );
 
-class MathSubject extends Subject {
+export class MathSubject extends Subject {
   calculateContribution(score: number): number {
     return score;
   }
 }
 
-class PhysicsSubject extends Subject {
+export class PhysicsSubject extends Subject {
   calculateContribution(score: number): number {
     return score;
   }
 }
 
-class ChemistrySubject extends Subject {
+export class ChemistrySubject extends Subject {
   calculateContribution(score: number): number {
     return score;
   }
 }
 
-class BiologySubject extends Subject {
+export class BiologySubject extends Subject {
   calculateContribution(score: number): number {
     return score;
   }
 }
 
-class LiteratureSubject extends Subject {
+export class LiteratureSubject extends Subject {
   calculateContribution(score: number): number {
     return score;
   }
 }
 
-class HistorySubject extends Subject {
+export class HistorySubject extends Subject {
   calculateContribution(score: number): number {
     return score;
   }
 }
 
-class GeographySubject extends Subject {
+export class GeographySubject extends Subject {
   calculateContribution(score: number): number {
     return score;
   }
 }
 
-class CivicEducationSubject extends Subject {
+export class CivicEducationSubject extends Subject {
   calculateContribution(score: number): number {
     return score;
   }
 }
 
-class ForeignLanguage extends Subject {
+export class ForeignLanguage extends Subject {
   calculateContribution(score: number): number {
     return score;
   }
