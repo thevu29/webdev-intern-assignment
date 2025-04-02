@@ -49,7 +49,7 @@ export class ScoreService {
     };
   }
 
-  async getScoreByGroup(registrationNumber: string, groupId: string) {
+  async getScoreByGroup(registrationNumber: string, groupCode: string) {
     const student = await Student.findOne({
       where: { registrationNumber },
     });
@@ -80,7 +80,7 @@ export class ScoreService {
     });
 
     const groupInfo = await SubjectGroup.findOne({
-      where: { code: groupId },
+      where: { code: groupCode },
     });
 
     if (!groupInfo) {
@@ -89,7 +89,7 @@ export class ScoreService {
 
     const groupScore = await subjectService.calculateGroupScore(
       scoresBySubject,
-      groupId
+      groupCode
     );
 
     if (groupScore === 0) {
