@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      sbd: {
+      registrationNumber: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
@@ -26,7 +26,7 @@ module.exports = {
       },
     });
 
-    await queryInterface.addIndex("students", ["sbd"]);
+    await queryInterface.addIndex("students", ["registrationNumber"]);
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("students");

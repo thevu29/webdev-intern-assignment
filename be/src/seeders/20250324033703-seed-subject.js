@@ -3,15 +3,15 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     const subjects = [
-      { name: "toan", createdAt: new Date(), updatedAt: new Date() },
-      { name: "ngu_van", createdAt: new Date(), updatedAt: new Date() },
-      { name: "ngoai_ngu", createdAt: new Date(), updatedAt: new Date() },
-      { name: "vat_li", createdAt: new Date(), updatedAt: new Date() },
-      { name: "hoa_hoc", createdAt: new Date(), updatedAt: new Date() },
-      { name: "sinh_hoc", createdAt: new Date(), updatedAt: new Date() },
-      { name: "lich_su", createdAt: new Date(), updatedAt: new Date() },
-      { name: "dia_li", createdAt: new Date(), updatedAt: new Date() },
-      { name: "gdcd", createdAt: new Date(), updatedAt: new Date() },
+      { name: "toan", code: "toan" },
+      { name: "ngu_van", code: "ngu_van" },
+      { name: "ngoai_ngu", code: "ngoai_ngu" },
+      { name: "vat_li", code: "vat_li" },
+      { name: "hoa_hoc", code: "hoa_hoc" },
+      { name: "sinh_hoc", code: "sinh_hoc" },
+      { name: "lich_su", code: "lich_su" },
+      { name: "dia_li", code: "dia_li" },
+      { name: "gdcd", code: "gdcd" },
     ];
 
     await queryInterface.bulkInsert("subjects", subjects, {});

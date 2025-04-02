@@ -16,7 +16,6 @@ module.exports = {
       throw new Error(`CSV file not found at: ${csvPath}`);
     }
 
-    // Get all subjects
     const subjects = await queryInterface.sequelize.query(
       "SELECT id, name FROM subjects",
       { type: Sequelize.QueryTypes.SELECT }
@@ -27,7 +26,6 @@ module.exports = {
       subjectMap[subject.name] = subject.id;
     });
 
-    // First process students
     console.log("Starting student import...");
     await new Promise((resolve, reject) => {
       const studentChunks = [];
@@ -41,13 +39,10 @@ module.exports = {
           const sbd = row.sbd?.trim();
           if (sbd && !seenSbds.has(sbd)) {
             currentChunk.push({
-              sbd,
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              registrationNumber: sbd,
             });
             seenSbds.add(sbd);
 
-            // When chunk is full, add to chunks array and create new chunk
             if (currentChunk.length >= CHUNK_SIZE) {
               studentChunks.push([...currentChunk]);
               currentChunk = [];
@@ -56,12 +51,10 @@ module.exports = {
         })
         .on("end", async () => {
           try {
-            // Add final chunk if it has any records
             if (currentChunk.length > 0) {
               studentChunks.push(currentChunk);
             }
 
-            // Insert students in chunks
             console.log(`Processing ${studentChunks.length} student chunks...`);
             for (let i = 0; i < studentChunks.length; i += 100) {
               console.log(
@@ -83,19 +76,17 @@ module.exports = {
         });
     });
 
-    // Now get all the students
     console.log("Fetching student IDs...");
     const insertedStudents = await queryInterface.sequelize.query(
-      "SELECT id, sbd FROM students",
+      'SELECT id, "registrationNumber" FROM students',
       { type: Sequelize.QueryTypes.SELECT }
     );
 
     const studentMap = {};
     insertedStudents.forEach((student) => {
-      studentMap[student.sbd] = student.id;
+      studentMap[student.registrationNumber] = student.id;
     });
 
-    // Now process scores in chunks
     console.log("Starting score import...");
     return new Promise((resolve, reject) => {
       let scoreChunks = [];
@@ -125,11 +116,8 @@ module.exports = {
                   studentId,
                   subjectId: subjectMap[subjectName],
                   score: scoreValue,
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
                 });
 
-                // When chunk is full, add to chunks array and create new chunk
                 if (currentChunk.length >= CHUNK_SIZE) {
                   scoreChunks.push([...currentChunk]);
                   currentChunk = [];
@@ -140,20 +128,16 @@ module.exports = {
         })
         .on("end", async () => {
           try {
-            // Add final chunk if it has any records
             if (currentChunk.length > 0) {
               scoreChunks.push(currentChunk);
             }
-
-            // Insert scores in chunks
             console.log(`Processing ${scoreChunks.length} score chunks...`);
-            for (let i = 0; i < scoreChunks.length; i++) {
+            for (let i = 0; i < scoreChunks.length; i += 100) {
               console.log(
                 `Inserting score chunk ${i + 1}/${scoreChunks.length}...`
               );
               await queryInterface.bulkInsert("scores", scoreChunks[i], {});
 
-              // Free memory after each chunk is inserted
               scoreChunks[i] = null;
             }
 

@@ -1,13 +1,13 @@
 "use strict";
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("subjects", {
+    await queryInterface.createTable("subject_groups", {
       id: {
-        type: Sequelize.INTEGER,
+        allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        type: Sequelize.INTEGER,
       },
       name: {
         type: Sequelize.STRING,
@@ -18,30 +18,19 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      groupId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "subject_groups",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "SET NULL",
-      },
       createdAt: {
-        type: Sequelize.DATE,
         allowNull: false,
+        type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
-        type: Sequelize.DATE,
         allowNull: false,
+        type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
     });
   },
-
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("subjects");
+    await queryInterface.dropTable("subject_groups");
   },
 };

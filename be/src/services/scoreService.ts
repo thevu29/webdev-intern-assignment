@@ -1,21 +1,23 @@
 import { Op } from "sequelize";
-import Score from "../models/score";
-import Student from "../models/student";
-import Subject from "../models/subject";
+import { Student, Subject, Score } from "../models";
+import {
+  calculateTotalScore,
+  calculateScoreByGroup,
+} from "./subjectGroupService";
 
 interface StudentScore {
-  sbd: string;
-  toan: number;
-  vat_li: number;
-  hoa_hoc: number;
-  tong_diem: number;
+  registrationNumber: string;
+  subjectScores: Record<string, number>;
+  groupId: string | null;
+  groupName: string | null;
+  totalScore: number;
 }
 
 export const getScoreByRegistrationNumberService = async (
   registrationNumber: string
 ) => {
   const student = await Student.findOne({
-    where: { sbd: registrationNumber },
+    where: { registrationNumber },
   });
 
   if (!student) {
@@ -28,7 +30,7 @@ export const getScoreByRegistrationNumberService = async (
       {
         model: Subject,
         as: "subject",
-        attributes: ["name"],
+        attributes: ["name", "code"],
       },
     ],
   });
@@ -39,24 +41,79 @@ export const getScoreByRegistrationNumberService = async (
 
   const scoresBySubject: Record<string, number> = {};
   scores.forEach((score) => {
-    const subjectName = (score.get("subject") as any).name;
-    scoresBySubject[subjectName] = score.score;
+    const subject = score.get("subject") as any;
+    scoresBySubject[subject.code] = score.score;
   });
 
+  const { groupId, groupName, totalScore } = await calculateTotalScore(
+    scoresBySubject
+  );
+
   return {
-    sbd: student.sbd,
+    registrationNumber: student.registrationNumber,
     ...scoresBySubject,
+    groupId,
+    groupName,
+    totalScore,
+  };
+};
+
+export const getScoreByGroupService = async (
+  registrationNumber: string,
+  groupId: string
+) => {
+  const student = await Student.findOne({
+    where: { registrationNumber },
+  });
+
+  if (!student) {
+    return null;
+  }
+
+  const scores = await Score.findAll({
+    where: { studentId: student.id },
+    include: [
+      {
+        model: Subject,
+        as: "subject",
+        attributes: ["name", "code"],
+      },
+    ],
+  });
+
+  if (!scores || scores.length === 0) {
+    return null;
+  }
+
+  const scoresBySubject: Record<string, number> = {};
+  scores.forEach((score) => {
+    const subject = score.get("subject") as any;
+    scoresBySubject[subject.code] = score.score;
+  });
+
+  const result = await calculateScoreByGroup(scoresBySubject, groupId);
+
+  if (!result) {
+    return null;
+  }
+
+  return {
+    registrationNumber: student.registrationNumber,
+    ...scoresBySubject,
+    groupId: result.groupId,
+    groupName: result.groupName,
+    totalScore: result.totalScore,
   };
 };
 
 export const getStatisticsService = async () => {
   const subjectsData = await Subject.findAll();
-  const subjectNames = subjectsData.map((subject) => subject.name);
+  const subjectCodes = subjectsData.map((subject) => subject.get("code"));
 
   const statistics = [];
 
-  for (const subjectName of subjectNames) {
-    const subject = subjectsData.find((s) => s.name === subjectName);
+  for (const subjectCode of subjectCodes) {
+    const subject = subjectsData.find((s) => s.get("code") === subjectCode);
     if (!subject) continue;
 
     const gte8Count = await Score.count({
@@ -88,7 +145,8 @@ export const getStatisticsService = async () => {
     });
 
     statistics.push({
-      subject: subjectName,
+      subject: subject.get("name"),
+      subjectCode,
       greaterThanOrEqual8: gte8Count,
       from6To8: from6To8Count,
       from4To6: from4To6Count,
@@ -100,16 +158,6 @@ export const getStatisticsService = async () => {
 };
 
 export const getTop10StudentsGroupAService = async () => {
-  const [toanSubject, vatLiSubject, hoaHocSubject] = await Promise.all([
-    Subject.findOne({ where: { name: "toan" } }),
-    Subject.findOne({ where: { name: "vat_li" } }),
-    Subject.findOne({ where: { name: "hoa_hoc" } }),
-  ]);
-
-  if (!toanSubject || !vatLiSubject || !hoaHocSubject) {
-    throw new Error("Required subjects not found");
-  }
-
   const studentsWithAllScores = await Student.findAll({
     include: [
       {
@@ -121,28 +169,51 @@ export const getTop10StudentsGroupAService = async () => {
     ],
   });
 
-  const studentScores = studentsWithAllScores
-    .map((student) => {
+  const studentScores = await Promise.all(
+    studentsWithAllScores.map(async (student) => {
       const scores = student.get("scores") as any[];
-      const toanScore =
-        scores.find((s) => s.subjectId === toanSubject.id)?.score || 0;
-      const vatLiScore =
-        scores.find((s) => s.subjectId === vatLiSubject.id)?.score || 0;
-      const hoaHocScore =
-        scores.find((s) => s.subjectId === hoaHocSubject.id)?.score || 0;
+      const scoresBySubject: Record<string, number> = {};
 
-      if (toanScore && vatLiScore && hoaHocScore) {
+      scores.forEach((scoreObj) => {
+        const subject = scoreObj.subject;
+        if (subject && subject.code) {
+          scoresBySubject[subject.code] = scoreObj.score;
+        }
+      });
+
+      if (Object.keys(scoresBySubject).length > 0) {
+        const { groupId, groupName, totalScore } = await calculateTotalScore(
+          scoresBySubject
+        );
+
         return {
-          sbd: student.sbd,
-          toan: toanScore,
-          vat_li: vatLiScore,
-          hoa_hoc: hoaHocScore,
-          tong_diem: toanScore + vatLiScore + hoaHocScore,
-        };
+          registrationNumber: student.registrationNumber,
+          subjectScores: scoresBySubject,
+          groupId,
+          groupName,
+          totalScore,
+        } as StudentScore;
       }
       return null;
     })
-    .filter((score): score is StudentScore => score !== null);
+  );
 
-  return studentScores.sort((a, b) => b.tong_diem - a.tong_diem).slice(0, 10);
+  const filteredScores = studentScores.filter(
+    (score): score is StudentScore =>
+      score !== null &&
+      (score.groupId === "A" ||
+        (score.subjectScores["toan"] !== undefined &&
+          score.subjectScores["vat_li"] !== undefined &&
+          score.subjectScores["hoa_hoc"] !== undefined))
+  );
+  return filteredScores
+    .sort((a, b) => b.totalScore - a.totalScore)
+    .slice(0, 10)
+    .map((score) => ({
+      registrationNumber: score.registrationNumber,
+      ...score.subjectScores,
+      groupId: score.groupId,
+      groupName: score.groupName,
+      totalScore: score.totalScore,
+    }));
 };

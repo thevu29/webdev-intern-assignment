@@ -1,16 +1,8 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
-import Student from "./student";
-import Subject from "./subject";
+import { IScore } from "../interfaces";
 
-interface ScoreAttributes {
-  id: number;
-  studentId: number;
-  subjectId: number;
-  score: number;
-}
-
-class Score extends Model<ScoreAttributes> implements ScoreAttributes {
+class Score extends Model<IScore> implements IScore {
   public id!: number;
   public studentId!: number;
   public subjectId!: number;
@@ -43,6 +35,10 @@ Score.init(
     score: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      validate: {
+        min: 0,
+        max: 10,
+      },
     },
   },
   {
@@ -62,17 +58,8 @@ Score.init(
         unique: true,
       },
     ],
+    timestamps: true,
   }
 );
-
-Score.belongsTo(Student, {
-  foreignKey: "studentId",
-  as: "student",
-});
-
-Score.belongsTo(Subject, {
-  foreignKey: "subjectId",
-  as: "subject",
-});
 
 export default Score;

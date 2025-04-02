@@ -1,15 +1,10 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
-import Score from "./score";
+import { IStudent } from "../interfaces";
 
-interface StudentAttributes {
-  id: number;
-  sbd: string;
-}
-
-class Student extends Model<StudentAttributes> implements StudentAttributes {
+class Student extends Model<IStudent> implements IStudent {
   public id!: number;
-  public sbd!: string;
+  public registrationNumber!: string;
 }
 
 Student.init(
@@ -19,21 +14,17 @@ Student.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    sbd: {
+    registrationNumber: {
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
     },
   },
   {
-    tableName: "students",
     sequelize,
+    tableName: "students",
+    timestamps: true,
   }
 );
-
-Student.hasMany(Score, {
-  foreignKey: "studentId",
-  as: "scores",
-});
 
 export default Student;
